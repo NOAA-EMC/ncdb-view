@@ -70,7 +70,7 @@ it is 56373 in the example above.
 Step 1.
 In your first window login using:
 ```bash
-ssh -L 56373:127.0.0.1:56373 John.Steffen@ursa-rsa.boulder.rdhpcs.noaa.gov
+ssh -L 56373:127.0.0.1:56373 John.Steffen@ursa-mfa.fairmont.rdhpcs.noaa.gov
 ```
 
 Step 2:
@@ -78,8 +78,8 @@ In your second window login using:
 ```bash
 ssh -p 56373 -L 8734:127.0.0.1:8734 John.Steffen@127.0.0.1
 ```
-Notice: 8734 is the port number that needs to be consistent
-with the port number used by ncdb-viewer
+Notice: 8734 is the port number that needs to be the same
+as the port number used by ncdb-view
 
 
 Run the application on ursa:
