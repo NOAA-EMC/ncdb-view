@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NCDB Manager - Analysis</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 text-gray-800 min-h-screen flex flex-col">
+
+    <header class="bg-slate-900 text-white shadow-md p-4">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-bold tracking-wide">Analysis Workspace</h1>
+            <a href="index.html" class="bg-slate-700 hover:bg-slate-600 text-white px-4 py-2 rounded font-medium transition">
+                &larr; Back to Dashboard
+            </a>
+        </div>
+    </header>
+
+    <main class="flex-1 max-w-3xl w-full mx-auto p-6 space-y-6">
+
+        <section class="bg-white rounded-lg shadow p-6 space-y-4">
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Dataset</label>
+                <select id="select-dataset" class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"></select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Observation Space</label>
+                <select id="select-obsspace" class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm" disabled>
+                    <option value="">-- Select a Dataset First --</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Variable</label>
+                <select id="select-variable" class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm" disabled>
+                    <option value="">-- Select an Obs Space First --</option>
+                </select>
+            </div>
+
+            <div>
+                <label class="block text-sm font-semibold text-gray-600 mb-1">Attribute</label>
+                <select id="select-attribute" class="w-full p-2 border border-gray-300 rounded bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm" disabled>
+                    <option value="">-- Select a Variable First --</option>
+                </select>
+            </div>
+
+            <button id="btn-add-spec" class="w-full bg-slate-800 hover:bg-slate-700 text-white font-medium py-2 rounded transition" disabled>
+                Add to Plot
+            </button>
+        </section>
+
+        <section class="bg-white rounded-lg shadow p-6 space-y-4">
+            <div class="flex justify-between items-center border-b pb-2">
+                <h2 class="text-md font-bold text-gray-700">Staged Plot Specs</h2>
+                <button id="btn-clear" class="text-sm text-red-600 hover:text-red-500 font-medium">Clear All</button>
+            </div>
+            
+            <ul id="specs-basket" class="space-y-2 divide-y divide-gray-100">
+                <li class="text-sm text-gray-400 italic py-2 empty-msg">No plot specifications added yet.</li>
+            </ul>
+
+            <button id="btn-render" class="w-full bg-blue-600 hover:bg-blue-500 text-white font-semibold py-2.5 rounded transition tracking-wide shadow hidden">
+                Render Plot
+            </button>
+        </section>
+
+        <section id="canvas-section" class="bg-white rounded-lg shadow p-4 flex justify-center items-center min-h-[200px] hidden">
+            <div id="plot-loading" class="text-gray-500 italic hidden">Generating plot figures...</div>
+            <img id="plot-img" src="" alt="NCDB Analytical Plot Output" class="max-w-full h-auto border border-gray-200 rounded hidden">
+        </section>
+
+    </main>
+
+    <script src="analysis.js"></script>
+</body>
+</html>
