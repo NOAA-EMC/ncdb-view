@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const terminalSection = ui.terminalSection;
     const terminalOutput = ui.terminalOutput;
     const terminalStatus = ui.terminalStatus;
+    const scannerSelect = document.getElementById("scanner-type");
 
     // Historical Workspace Node Targets (Tab 2)
     const selectDataset = ui.selectDataset;
@@ -63,6 +64,25 @@ document.addEventListener("DOMContentLoaded", () => {
             ui.dbFilename.setAttribute("title", fullPath);
         } catch (err) {
             ui.dbFilename.textContent = "Error loading DB";
+        }
+    }
+
+    async function loadScanners() {
+        try {
+            const res = await fetch("/scanners");
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+            
+            scannerSelect.innerHTML = "";
+            data.scanners.forEach(scanner => {
+                const opt = document.createElement("option");
+                opt.value = scanner;
+                // Capitalize first letters nicely for display purposes
+                opt.textContent = scanner.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+                scannerSelect.appendChild(opt);
+            });
+        } catch (err) {
+            scannerSelect.innerHTML = '<option value="">Error loading scanners</option>';
         }
     }
 
@@ -136,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const payload = {
             data_root: dataRootInput.value,
-            scanner: document.getElementById("scanner-type").value,
+            scanner: scannerSelect.value,
             n_cycles: parseInt(document.getElementById("n-cycles").value, 10)
         };
 
@@ -342,6 +362,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // --- System Setup Thread Bootstraps ---
     scanForm.addEventListener("submit", handleScanSubmit);
     loadDbInfo();
+    loadScanners();
     loadDatasets();
     ui.renderBasket(activeSpecs);
 });

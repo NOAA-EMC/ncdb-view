@@ -19,8 +19,7 @@ import threading
 from ncdb.api.database import Database
 from ncdb.api import FieldCollection
 
-from ncdb.scanners.marine_da_scanner import MarineDAScanner
-from ncdb.scanners.obsforge_scanner import ObsForgeScanner
+from ncdb.scanners import list_scanners, get_scanner_class
 
 
 class ScanRequest(BaseModel):
@@ -60,8 +59,6 @@ BASE_DIR = Path(__file__).parent
 
 app = FastAPI()
 
-# db = Database("cp4.03-parqllel-3dvar.db")
-
 
 @app.get("/info")
 def info():
@@ -70,23 +67,6 @@ def info():
         "db_path": db.path
     }
 
-# @app.get("/datasets")
-# def datasets():
-    # db = app.state.db
-# 
-    # result = []
-# 
-    # for ds in db.datasets():
-# 
-        # result.append({
-            # "id": ds.id,
-            # "name": ds.name,
-            # "root_dir": ds.root_dir,
-            # "n_cycles": len(ds.cycles),
-        # })
-# 
-    # return result
-# 
 
 @app.get("/datasets")
 def datasets():
@@ -114,7 +94,6 @@ def datasets():
         })
 
     return result
-
 
 
 @app.get("/obsspaces/{dataset_id}")
@@ -148,16 +127,15 @@ def get_attributes(req: AttributesRequest):
     return {"attributes": attrs}
 
 
+@app.get("/scanners")
+def get_scanners():
+    return {"scanners": list_scanners()}
+
 @app.post("/scan")
 def scan(req: ScanRequest):
     db = app.state.db
 
     q = Queue()
-    scanners = {
-        "marine": MarineDAScanner,
-        "obsforge": ObsForgeScanner,
-    }
-    scanner_cls = scanners[req.scanner]
 
     def callback(msg):
         q.put(msg)
@@ -166,7 +144,7 @@ def scan(req: ScanRequest):
         q.put("Starting scan...\n")
         db.scan(
             data_root=req.data_root,
-            scanner_cls=scanner_cls,
+            scanner=req.scanner,
             n_cycles=req.n_cycles,
             callback=callback
         )
