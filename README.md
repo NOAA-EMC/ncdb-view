@@ -30,7 +30,7 @@ source venv/bin/activate
 
 2. Install ncdb-view (this will automatically pull core ncdb)
 ```bash
-pip install git+[https://github.com/NOAA-EMC/ncdb-view.git](https://github.com/NOAA-EMC/ncdb-view.git)
+pip install git+https://github.com/NOAA-EMC/ncdb-view.git
 
 ```
 
