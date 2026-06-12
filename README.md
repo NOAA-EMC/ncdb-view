@@ -22,15 +22,16 @@ Since ncdb-view depends on the core ncdb library,
 it is recommended to install both into a clean virtual 
 environment.
 
-# 1. Create and activate a virtual environment
+1. Create and activate a virtual environment
 ```bash
 python -m venv venv
 source venv/bin/activate
 ```
 
-# 2. Install ncdb-view (this will automatically pull core ncdb)
+2. Install ncdb-view (this will automatically pull core ncdb)
 ```bash
-pip install git+https://github.com/givelberg/ncdb-view.git
+pip install git+[https://github.com/NOAA-EMC/ncdb-view.git](https://github.com/NOAA-EMC/ncdb-view.git)
+
 ```
 
 Usage
