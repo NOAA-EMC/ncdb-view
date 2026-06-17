@@ -316,24 +316,37 @@ document.addEventListener("DOMContentLoaded", () => {
         ui.selectVariable2d.disabled = false;
     });
 
-    ui.selectVariable2d.addEventListener("change", () => {
+	ui.selectVariable2d.addEventListener("change", async () => {
         const varName = ui.selectVariable2d.value;
         selection2d.variable = varName; selection2d.cycle = "";
         resetDropdowns([ui.selectCycle2d], true);
         ui.btnRender2d.disabled = true;
         if (!varName) return;
 
-        // Extract cached dataset to match active context from internal memory frame
-        const activeDs = cachedDatasets.find(d => d.id === selection2d.dataset_id);
-        
-        if (activeDs && activeDs.cycles) {
-            ui.selectCycle2d.innerHTML = '<option value="">-- Choose Cycle --</option>';
-            activeDs.cycles.forEach(c => { 
-                ui.selectCycle2d.innerHTML += `<option value="${c}">${c}</option>`; 
+        try {
+            const res = await fetch("/fieldcycles", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    dataset: selection2d.dataset_id,
+                    obsspace: selection2d.obsspace,
+                    variable: varName
+                })
             });
-            ui.selectCycle2d.disabled = false;
-        } else {
-            ui.selectCycle2d.innerHTML = '<option value="">-- No Available Cycles Found --</option>';
+            if (!res.ok) throw new Error();
+            const data = await res.json();
+
+            if (data.cycles && data.cycles.length > 0) {
+                ui.selectCycle2d.innerHTML = '<option value="">-- Choose Cycle --</option>';
+                data.cycles.forEach(c => { 
+                    ui.selectCycle2d.innerHTML += `<option value="${c}">${c}</option>`; 
+                });
+                ui.selectCycle2d.disabled = false;
+            } else {
+                ui.selectCycle2d.innerHTML = '<option value="">-- No Available Cycles Found --</option>';
+            }
+        } catch (err) {
+            ui.selectCycle2d.innerHTML = '<option value="">-- Error Loading Cycles --</option>';
         }
     });
 

@@ -48,6 +48,11 @@ class Plot2DRequest(BaseModel):
     variable: str
     cycle: str
 
+class CyclesRequest(BaseModel):
+    dataset: int
+    obsspace: str
+    variable: str
+
 
 BASE_RUNTIME_DIR = Path(tempfile.gettempdir()) / "ncdb_view"
 PLOTS_DIR = BASE_RUNTIME_DIR / "plots"
@@ -66,7 +71,6 @@ def info():
     return {
         "db_path": db.path
     }
-
 
 @app.get("/datasets")
 def datasets():
@@ -95,7 +99,6 @@ def datasets():
 
     return result
 
-
 @app.get("/obsspaces/{dataset_id}")
 def obsspaces(dataset_id: int):
     db = app.state.db
@@ -103,7 +106,6 @@ def obsspaces(dataset_id: int):
     return sorted(
         [o.name for o in ds.obsspaces()]
     )
-
 
 @app.get("/variables/{dataset_id}/{obsspace}")
 def variables(dataset_id: int, obsspace: str):
@@ -115,6 +117,25 @@ def variables(dataset_id: int, obsspace: str):
     # return obs.list_variables(group="ObsValue")
     return obs.list_variables()
 
+@app.post("/fieldcycles")
+def get_field_cycles(req: CyclesRequest):
+    db = app.state.db
+    ds = db.dataset(req.dataset)
+    obsspace = ds.obsspace(req.obsspace)
+    field = obsspace.field(req.variable)
+    
+    # Extract data timestamps available for this field
+    actual_cycles = field.cycles
+    
+    formatted_cycles = []
+    for c in actual_cycles:
+        if isinstance(c, datetime):
+            formatted_cycles.append(c.strftime("%Y-%m-%d %H:%M:%S"))
+        else:
+            formatted_cycles.append(str(c))
+            
+    return {"cycles": sorted(list(set(formatted_cycles)))}
+
 
 @app.post("/attributes")
 def get_attributes(req: AttributesRequest):
@@ -125,7 +146,6 @@ def get_attributes(req: AttributesRequest):
     attrs = field.list_attributes()
 
     return {"attributes": attrs}
-
 
 @app.get("/scanners")
 def get_scanners():
